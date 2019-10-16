@@ -1,0 +1,79 @@
+
+
+NAME: Rahul Ratra
+EMAIL ID: rratra@uncc.edu
+STUDENT ID: 801100033
+
+
+Execution Instructions
+
+a) First copy all the three files roadnot and cagedbird.txt daffodils.tx  to Cloudera VM from local disk
+
+Hadoop fs -put roadnot.txt /user/rratra1/input
+Hadoop fs -put daffodils.txt /user/rratra1/input
+Hadoop fs -put cagedbird.txt /user/rratra1/input
+=====================================================================================================================================================
+
+b) Run the jar file created for inverted index
+
+We have created Jar file for following Java classes
+Index.java->Index.jar		---> this code will create a reducer output containing term and their corresponding document list
+FullIndex.java->FullIndex.jar. ----> This code will create a reducer output containing term their document list and offset.
+BiWordIndex.java->BiWord.jar. ----> This code will produce a bi word index and their corresponding document list.
+FullIndexWithSnippet.java->FullIndexWithSnippet.jar-->This code will create a reducer output which will have term their document list , offset and along with that snippet of the term.
+This reducer output will be used for querying full index where in we require the snippet of the word along with document list and offset.
+
+For MapReduce Execution 
+The first argument will be the location where we have placed our input files in HDFS.
+The second argument will be our output file location where we want our reducer output to be placed.
+
+Hadoop jar /home/cloudera/Index.jar /user/rratra1/input /user/rratra1/output_index
+
+Run the jar for full inverted index 
+
+Hadoop jar /home/cloudera/FullIndex.jar /user/rratra1/input /user/rratra1/output_fullindex
+
+Run the jar for full inverted index with snippet of the term
+
+Hadoop jar /home/cloudera/FullIndexWithSnippet.jar /user/rratra1/input /user/rratra1/output_fullindexwithesnippet
+
+Run the jar for byword indexing 
+
+Hadoop jar /home/cloudera/BiWord.jar  /user/rratra1/input /user/rratra1/output_biword
+
+So by now we have 4 reducer output first one contains the simple inverted index ,second one contains full inverted index with term offset and document list 
+The third reducer output contains full inverted index along with snippet of the term. The fourth output contains the BiWord reducer output.
+===================================================================================================================================================
+
+c) To save the output of the reducer to a text file
+
+Hadoop fs -cat /user/rratra1/output/p* > index_all.txt
+Hadoop fs -cat /user/rratra1/output_fullindex/p* > fullindex_all.txt
+
+======================================================================================================================================================
+d)Now run the query on reducer output
+
+We have created 3 Query Jars as follows
+QueryIndex.java ->QueryIndex.jar
+QueryFullIndex.java-> QueryFullIndex.jar
+BiWord.java->BiWordQuery.jar
+
+
+Create  a text file and insert few words in that file that needs to be queried .This will be our query file as 
+we are going to give input to the query through this file.
+
+There will be two different files for query , one will be for inverted and full inverted and the other will be for
+Biword index.
+
+The command for running query is
+hadoop jar /home/cloudera/QueryIndex.jar  /home/cloudera/test.txt /user/rratra1/output_index test_output.txt
+adoop jar /home/cloudera/QQueryFullIndex.jar  /home/cloudera/test.txt /user/rratra1/output_fullindexwithsnippet test_output.txt
+adoop jar /home/cloudera/BiWordQuery.jar /home/cloudera/test.txt /user/rratra1/output_biword test_output.txt
+
+Where in the first argument is location of the query file , the second argument
+Is the location of our reducer output and the third argument is the place where we want to save the result of the query.
+
+===============================================================================================================================================================
+
+
+
